@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Electrical Power</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application uses a single-page, vertical-scrolling structure, organized into thematic sections that mirror the source report's logical flow: 1) Core Concept, 2) Interactive Water Analogy, 3) Interactive Mechanical Analogy, 4) Real-World Synthesis. This structure was chosen for its simplicity and ease of navigation, guiding the student step-by-step from the abstract definition to interactive exploration and finally to concrete examples. The key interactions are the sliders in each analogy, which allow users to actively "play" with the concepts of Voltage/Force and Resistance/Friction to see the immediate effect on Current/Velocity and, most importantly, Power. This active, hands-on approach is superior to static text for building intuition, especially for an audience with a less-strong math/physics background. -->
+    <!-- Visualization & Content Choices:
+        - Core Concept: Goal: Inform. Method: Styled HTML text (Tailwind). Interaction: None. Justification: Clear, direct presentation of foundational definitions.
+        - Analogy 1 (Water): Goal: Explore/Relate. Method: HTML sliders for V (Pressure) & R (Hose Width), Vanilla JS for logic (I=V/R, P=V*I), and HTML Canvas for visualization (water particles, spinning wheel). Interaction: User drags sliders, canvas and text readouts update dynamically. Justification: Turns the static "scenarios" from the report into an explorable system. Canvas provides engaging visual feedback. Library: Vanilla JS + Canvas API.
+        - Analogy 2 (Mechanical): Goal: Explore/Relate. Method: HTML sliders for F (Force) & Friction, Vanilla JS for logic (v = F - friction, P=F*v), and HTML Canvas for visualization (person pushing box). Interaction: User drags sliders, canvas and text readouts update. Justification: Reinforces the concept with a physical, tangible analogy. Library: Vanilla JS + Canvas API.
+        - Synthesis: Goal: Compare/Inform. Method: Styled HTML "cards" (Tailwind) displaying calculations for the report's phone charger vs. stove examples. Interaction: None. Justification: Connects the abstract concepts and analogies to real-world, familiar objects, solidifying the lesson.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        .anim-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 250px;
+            max-height: 300px;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ca8a04;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ca8a04;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 0;
+        }
+    </style>
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+      };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans leading-relaxed">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+
+        <header class="text-center my-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-900 mb-2">Understanding Electrical Power</h1>
+            <p class="text-2xl text-yellow-700 font-semibold">$P = I \times V$</p>
+        </header>
+
+        <section id="concept" class="mb-12 p-6 bg-white rounded-lg shadow-sm">
+            <h2 class="text-3xl font-bold text-stone-900 mb-4">What is Electrical Power?</h2>
+            <p class="mb-4 text-lg">
+                In simple terms, power is the <strong>rate</strong> at which work is done or energy is used. A giant stadium floodlight is far more "powerful" than a dim nightlight because it uses energy at a much faster rate.
+            </p>
+            <p class="mb-4 text-lg">
+                The equation for electrical power, $P = I \times V$, is the key. To understand it, we need to know what $I$ and $V$ are:
+            </p>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-stone-100 p-4 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-yellow-700">Voltage (V)</h3>
+                    <p>Think of this as <strong>electrical pressure</strong> or the "push." It's the force that makes electricity want to move.</p>
+                </div>
+                <div class="bg-stone-100 p-4 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-yellow-700">Current (I)</h3>
+                    <p>Think of this as the <strong>electrical flow rate.</strong> It's the amount of electricity that is <em>actually moving</em> past a point per second.</p>
+                </div>
+            </div>
+            <p class="mt-4 text-lg font-semibold text-center">
+                You cannot have power with just one or the other. You need <em>both</em> the push (Voltage) and the flow (Current).
+            </p>
+        </section>
+
+        <section id="analogy1" class="mb-12 p-6 bg-white rounded-lg shadow-sm">
+            <h2 class="text-3xl font-bold text-stone-900 mb-4">Analogy 1: The Water Hose</h2>
+            <p class="mb-6 text-lg">
+                This analogy helps visualize $P = IV$. Imagine using a water hose to spin a water wheel. The "power" is how fast you can make that wheel spin. Use the sliders to control the "Pressure" (Voltage) and "Hose Width" (the inverse of Resistance) to see how they create power.
+            </p>
+
+            <div class="anim-container mb-6">
+                <canvas id="waterCanvas"></canvas>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="voltageSlider" class="block text-lg font-medium text-stone-700">Voltage (Pressure, V)</label>
+                    <input id="voltageSlider" type="range" min="10" max="100" value="50" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                    <label for="resistanceSlider" class="block text-lg font-medium text-stone-700">Hose Width (Low to High)</label>
+                    <input id="resistanceSlider" type="range" min="10" max="100" value="50" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div class="bg-stone-100 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-yellow-700">Current (Flow, A)</h4>
+                    <p id="currentReadout" class="text-3xl font-bold">5.0 A</p>
+                </div>
+                <div class="bg-stone-100 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-yellow-700">Voltage (Pressure, V)</h4>
+                    <p id="voltageReadout" class="text-3xl font-bold">50 V</p>
+                </div>
+                <div class="bg-yellow-100 border border-yellow-300 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-yellow-800">Total Power (W)</h4>
+                    <p id="powerReadout1" class="text-3xl font-bold">250 W</p>
+                </div>
+            </div>
+            <p id="waterScenarioText" class="mt-4 text-lg text-center font-medium text-stone-700 h-12"></p>
+        </section>
+
+        <section id="analogy2" class="mb-12 p-6 bg-white rounded-lg shadow-sm">
+            <h2 class="text-3xl font-bold text-stone-900 mb-4">Analogy 2: Doing Mechanical Work</h2>
+            <p class="mb-6 text-lg">
+                This analogy compares electrical power to the mechanical power of pushing a box ($Power = Force \times Velocity$). Use the sliders to control the "Force" (Voltage) you apply and the "Box Friction" (Resistance) you have to overcome.
+            </p>
+
+            <div class="anim-container mb-6">
+                <canvas id="mechCanvas"></canvas>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="forceSlider" class="block text-lg font-medium text-stone-700">Force (Push, N)</label>
+                    <input id="forceSlider" type="range" min="0" max="100" value="50" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                    <label for="frictionSlider" class="block text-lg font-medium text-stone-700">Box Friction (Resistance)</label>
+                    <input id="frictionSlider" type="range" min="10" max="100" value="30" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div class="bg-stone-100 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-yellow-700">Velocity (Speed, m/s)</h4>
+                    <p id="velocityReadout" class="text-3xl font-bold">2.0 m/s</p>
+                </div>
+                <div class="bg-stone-100 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-yellow-700">Force (Push, N)</h4>
+                    <p id="forceReadout" class="text-3xl font-bold">50 N</p>
+                </div>
+                <div class="bg-yellow-100 border border-yellow-300 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-yellow-800">Total Power (W)</h4>
+                    <p id="powerReadout2" class="text-3xl font-bold">100 W</p>
+                </div>
+            </div>
+            <p id="mechScenarioText" class="mt-4 text-lg text-center font-medium text-stone-700 h-12"></p>
+        </section>
+
+        <section id="synthesis" class="p-6 bg-white rounded-lg shadow-sm">
+            <h2 class="text-3xl font-bold text-stone-900 mb-4 text-center">Tying It All Back Together</h2>
+            <p class="mb-6 text-lg text-center">
+                Electrical Power ($P = IV$) is the same idea. It's the combination of the electrical "push" (Voltage) and the actual "flow" (Current). Look at these real-world examples:
+            </p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white border-2 border-stone-200 p-6 rounded-lg text-center">
+                    <h3 class="text-2xl font-bold mb-3">Small Phone Charger</h3>
+                    <p class="text-lg mb-4">Uses the wall's "push" (Voltage) but only allows a tiny "flow" (Current).</p>
+                    <p class="text-2xl font-semibold bg-stone-100 p-3 rounded">$120V \times 0.1A = $ <span class="text-yellow-700">12 Watts</span></p>
+                    <p class="text-xl font-bold text-yellow-700 mt-3">Low Power</p>
+                </div>
+                <div class="bg-white border-2 border-yellow-300 p-6 rounded-lg text-center">
+                    <h3 class="text-2xl font-bold mb-3">Large Electric Stove</h3>
+                    <p class="text-lg mb-4">Uses the same "push" (Voltage) but draws a huge "flow" (Current) to get hot.</p>
+                    <p class="text-2xl font-semibold bg-yellow-50 p-3 rounded">$120V \times 20A = $ <span class="text-yellow-700">2,400 Watts</span></p>
+                    <p class="text-xl font-bold text-yellow-700 mt-3">High Power</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            initWaterAnalogy();
+            initMechanicalAnalogy();
+        });
+
+        function initWaterAnalogy() {
+            const canvas = document.getElementById('waterCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+
+            const voltageSlider = document.getElementById('voltageSlider');
+            const resistanceSlider = document.getElementById('resistanceSlider');
+            const currentReadout = document.getElementById('currentReadout');
+            const voltageReadout = document.getElementById('voltageReadout');
+            const powerReadout = document.getElementById('powerReadout1');
+            const scenarioText = document.getElementById('waterScenarioText');
+
+            let width, height;
+            let particles = [];
+            let wheelAngle = 0;
+            let voltage = 50, resistance = 50, current = 5, power = 250, wheelSpeed = 0.02;
+
+            function resizeCanvas() {
+                width = container.clientWidth;
+                height = container.clientHeight;
+                canvas.width = width;
+                canvas.height = height;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function createParticle() {
+                particles.push({
+                    x: 0,
+                    y: height / 2 + (Math.random() - 0.5) * (height / 2),
+                    vx: (voltage / 20) + Math.random() * 2,
+                    radius: Math.random() * 2 + 1,
+                    alpha: 1
+                });
+            }
+
+            function updateWater() {
+                voltage = parseFloat(voltageSlider.value);
+                let hoseWidth = parseFloat(resistanceSlider.value);
+                resistance = 110 - hoseWidth; 
+                
+                current = (voltage / resistance) * 10;
+                power = (voltage * current) / 10; 
+                wheelSpeed = power / 40000;
+
+                voltageReadout.textContent = voltage.toFixed(0) + ' V';
+                currentReadout.textContent = current.toFixed(1) + ' A';
+                powerReadout.textContent = power.toFixed(0) + ' W';
+
+                if (voltage > 70 && hoseWidth < 30) {
+                    scenarioText.textContent = "High Pressure, Narrow Hose... Low Power!";
+                } else if (voltage < 30 && hoseWidth > 70) {
+                    scenarioText.textContent = "Low Pressure, Wide Hose... Low Power!";
+                } else if (voltage > 70 && hoseWidth > 70) {
+                    scenarioText.textContent = "High Pressure, Wide Hose... High Power!";
+                } else {
+                    scenarioText.textContent = "Adjust sliders to see different scenarios.";
+                }
+            }
+
+            function drawWater() {
+                ctx.clearRect(0, 0, width, height);
+
+                particles = particles.filter(p => p.x < width && p.alpha > 0);
+                while (particles.length < current * 5 && particles.length < 500) {
+                    createParticle();
+                }
+
+                ctx.fillStyle = '#60a5fa';
+                particles.forEach(p => {
+                    p.x += p.vx * (voltage / 50);
+                    p.y += (Math.random() - 0.5) * 0.5;
+                    p.alpha -= 0.005;
+                    ctx.globalAlpha = Math.max(0, p.alpha);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                });
+
+                let wheelX = width * 0.75;
+                let wheelY = height / 2;
+                let wheelRadius = height * 0.3;
+
+                wheelAngle += wheelSpeed;
+
+                ctx.save();
+                ctx.translate(wheelX, wheelY);
+                ctx.rotate(wheelAngle);
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 4;
+
+                ctx.beginPath();
+                ctx.arc(0, 0, wheelRadius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                for (let i = 0; i < 8; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(wheelRadius, 0);
+                    ctx.stroke();
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(wheelRadius, 0);
+                    ctx.lineTo(wheelRadius, -wheelRadius * 0.3);
+                    ctx.stroke();
+                    ctx.rotate(Math.PI / 4);
+                }
+                ctx.restore();
+
+                requestAnimationFrame(drawWater);
+            }
+
+            voltageSlider.addEventListener('input', updateWater);
+            resistanceSlider.addEventListener('input', updateWater);
+            updateWater();
+            drawWater();
+        }
+
+        function initMechanicalAnalogy() {
+            const canvas = document.getElementById('mechCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+
+            const forceSlider = document.getElementById('forceSlider');
+            const frictionSlider = document.getElementById('frictionSlider');
+            const velocityReadout = document.getElementById('velocityReadout');
+            const forceReadout = document.getElementById('forceReadout');
+            const powerReadout = document.getElementById('powerReadout2');
+            const scenarioText = document.getElementById('mechScenarioText');
+
+            let width, height;
+            let force = 50, friction = 30, velocity = 0, power = 0;
+            let boxPos = 100;
+            let pushPhase = 0;
+
+            function resizeCanvas() {
+                width = container.clientWidth;
+                height = container.clientHeight;
+                canvas.width = width;
+                canvas.height = height;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function updateMech() {
+                force = parseFloat(forceSlider.value);
+                friction = parseFloat(frictionSlider.value);
+                
+                let netForce = force - friction;
+                velocity = (netForce > 0) ? (netForce / 20) : 0;
+                power = force * velocity;
+
+                forceReadout.textContent = force.toFixed(0) + ' N';
+                velocityReadout.textContent = velocity.toFixed(1) + ' m/s';
+                powerReadout.textContent = power.toFixed(0) + ' W';
+
+                if (force > 10 && velocity < 0.1) {
+                    scenarioText.textContent = "Pushing hard on a heavy box... Zero Power!";
+                } else if (force < 10 && velocity > 0) {
+                    scenarioText.textContent = "Pushing a light box... Low Power!";
+                } else if (force > 70 && velocity > 2) {
+                    scenarioText.textContent = "Pushing hard and moving fast... High Power!";
+                } else {
+                    scenarioText.textContent = "Adjust sliders to see different scenarios.";
+                }
+            }
+
+            function drawMech() {
+                ctx.clearRect(0, 0, width, height);
+
+                let groundY = height - 50;
+                let boxSize = 60;
+                let personX = boxPos - 20;
+
+                boxPos += velocity / 2;
+                if (boxPos > width + boxSize) {
+                    boxPos = -boxSize;
+                }
+                
+                ctx.fillStyle = '#a16207';
+                ctx.fillRect(boxPos, groundY - boxSize, boxSize, boxSize);
+                
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, groundY, width, 50);
+
+                let pushAmount = (force / 100) * 10;
+                if (velocity > 0) {
+                    pushPhase += 0.1;
+                    pushAmount += Math.sin(pushPhase) * 3;
+                }
+
+                ctx.strokeStyle = '#334155';
+                ctx.lineWidth = 4;
+                
+                ctx.beginPath();
+                ctx.arc(personX, groundY - boxSize - 10, 15, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(personX, groundY - boxSize + 5);
+                ctx.lineTo(personX, groundY - 20);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(personX, groundY - 20);
+                ctx.lineTo(personX - 10, groundY);
+                ctx.stroke();
+                ctx.moveTo(personX, groundY - 20);
+                ctx.lineTo(personX + 10, groundY);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(personX, groundY - 40);
+                ctx.lineTo(personX + 10 - pushAmount, groundY - 45);
+                ctx.lineTo(boxPos, groundY - 30);
+                ctx.stroke();
+
+                requestAnimationFrame(drawMech);
+            }
+
+            forceSlider.addEventListener('input', updateMech);
+            frictionSlider.addEventListener('input', updateMech);
+            updateMech();
+            drawMech();
+        }
+
+    </script>
+</body>
+</html>
