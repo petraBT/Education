@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How much does a plank bend?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F6;--panel:#FFFFFF;--ink:#18211E;--muted:#5B6662;--line:#D5DCD9;
+  --accent:#00693E;--wood:#C9A268;--woodEdge:#8A6A3A;--load:#B23A48;--bend:#2F6DB5;--hatch:#9AA6A1;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121715;--panel:#1A211E;--ink:#E6ECE9;--muted:#9AA6A1;--line:#2C3633;
+  --accent:#3FBF7F;--wood:#B58E55;--woodEdge:#7A5C30;--load:#E06B78;--bend:#6FA3E6;--hatch:#5B6662;color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#121715;--panel:#1A211E;--ink:#E6ECE9;--muted:#9AA6A1;--line:#2C3633;
+  --accent:#3FBF7F;--wood:#B58E55;--woodEdge:#7A5C30;--load:#E06B78;--bend:#6FA3E6;--hatch:#5B6662;color-scheme:dark;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Literata",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.65}
+main{max-width:760px;margin:0 auto;padding:48px 22px 80px}
+h1{font-size:clamp(34px,6vw,52px);line-height:1.08;font-weight:600;letter-spacing:-0.01em;margin:0 0 14px}
+h2{font-size:26px;line-height:1.25;font-weight:600;margin:64px 0 12px;display:flex;gap:14px;align-items:baseline}
+h2 .n{font-family:"Figtree",system-ui,sans-serif;font-size:15px;font-weight:600;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;min-width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex:none;transform:translateY(-3px)}
+p{margin:0 0 16px;max-width:66ch}
+.lede{font-size:20px;color:var(--muted);max-width:60ch}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 14px;margin:22px 0 26px}
+.fig svg{display:block;width:100%;height:auto}
+.ctl{font-family:"Figtree",system-ui,sans-serif;font-size:15px;color:var(--muted);display:grid;grid-template-columns:150px 1fr 90px;gap:10px 14px;align-items:center;margin-top:10px}
+.ctl output{color:var(--ink);font-weight:600;text-align:right}
+.ctl select,.ctl button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.read{font-family:"Figtree",system-ui,sans-serif;font-size:16px;color:var(--muted);margin-top:12px}
+.read b{color:var(--ink);font-size:22px;font-weight:600}
+.try{border-left:4px solid var(--accent);padding:4px 0 4px 18px;margin:24px 0}
+.try strong{font-family:"Figtree",system-ui,sans-serif;color:var(--accent)}
+.eq{font-size:22px;text-align:center;margin:20px 0;font-style:italic}
+.eq span{font-style:normal}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;font-family:"Figtree",system-ui,sans-serif;font-size:16px;margin:18px 0}
+.rules div{border-top:1px solid var(--line);padding-top:8px}
+.rules b{display:block;font-size:20px;color:var(--accent)}
+details{border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:10px 0;background:var(--panel)}
+summary{cursor:pointer;font-weight:500}
+details p{margin:10px 0 0}
+.lbl{font-family:"Figtree",system-ui,sans-serif;font-size:13px;fill:var(--muted)}
+.big{font-family:"Figtree",system-ui,sans-serif;font-size:16px;font-weight:600;fill:var(--ink)}
+@media (max-width:560px){.ctl{grid-template-columns:1fr 70px}.ctl label{grid-column:1/-1;margin-bottom:-6px}.rules{grid-template-columns:1fr}body{font-size:17px}}
+</style>
+</head>
+<body>
+<main>
+
+<h1>How much does a plank bend?</h1>
+<p class="lede">Put a person on the end of a plank sticking out of a wall. It sags. This page builds up, one idea at a time, how an engineer predicts by how much.</p>
+
+<div class="fig">
+<svg id="hero" viewBox="0 0 680 300" role="img" aria-label="A plank fixed in a wall sagging under a load at its tip"></svg>
+<div class="ctl">
+  <label for="hP">Load at the tip</label><input id="hP" type="range" min="100" max="1000" step="50" value="700"><output id="hPo"></output>
+  <label for="hH">Plank thickness</label><input id="hH" type="range" min="3" max="8" step="0.5" value="5"><output id="hHo"></output>
+  <label for="hM">Material</label><select id="hM"><option value="10">Wood</option><option value="70">Aluminium</option><option value="200">Steel</option></select><span></span>
+</div>
+<div class="read">Tip sag: <b id="hS"></b> &nbsp; (2 m long, 30 cm wide, bending drawn 5× larger than real)</div>
+<p class="read" style="margin:6px 0 0">The deflection <i>y</i>(<i>x</i>) is how far the plank has dropped below its unloaded position (the dashed line) at a distance <i>x</i> from the wall. The sag is just the deflection at the tip, <i>y</i>(<i>L</i>).</p>
+</div>
+
+<p>Play with the three sliders before reading on. Which one changes the sag the most? Hold on to your guess.</p>
+
+<div class="try"><strong>Try it with a ruler.</strong> Hold a ruler flat on a desk with half of it hanging over the edge and press the free end. Now turn it on its edge and press again. Same ruler, same material, same push. Why is one so much stiffer?</div>
+
+<h2><span class="n">1</span>Cut the plank in your mind</h2>
+<p>Imagine sawing through the plank somewhere along its length. The outer piece, with the person on it, would fall. So at every point, the part of the plank nearer the wall must be holding the outer part in place. It does two jobs.</p>
+<p>It holds the outer piece <em>up</em>, with a force equal to the load. That’s the <strong>shear force</strong>, and here it’s the same everywhere: <span style="font-style:italic">V = P</span>.</p>
+<p>It also stops the outer piece from <em>rotating</em>. The load acts like a person pushing on a wrench: the farther away it is, the stronger the twist. That twist is the <strong>bending moment</strong>.</p>
+
+<div class="fig">
+<svg id="cut" viewBox="0 0 680 310" role="img" aria-label="A cut in the plank, the lever arm to the load, and the bending moment along the plank"></svg>
+<div class="ctl"><label for="cX">Where to cut</label><input id="cX" type="range" min="0" max="0.95" step="0.01" value="0.3"><output id="cXo"></output></div>
+</div>
+
+<p class="eq">M = P × (distance from the cut to the load)</p>
+<p>Slide the cut toward the wall and the lever arm grows, so the moment grows. At the wall it’s largest, <span style="font-style:italic">P × L</span>. At the tip it’s zero. This is why diving boards and tree branches break near where they’re attached, not at the end.</p>
+
+<h2><span class="n">2</span>Moment makes the plank curve</h2>
+<p>A bending moment doesn’t move the plank all at once. It makes each little piece of the plank curve a little. Big moment, sharp curve. Small moment, gentle curve. Zero moment, straight.</p>
+<p>How sharply a piece curves also depends on how stiff the plank is. Engineers lump that stiffness into one number, <span style="font-style:italic">EI</span>, the <strong>flexural rigidity</strong>:</p>
+<p class="eq">how sharply it curves = M / EI</p>
+<p><span style="font-style:italic">E</span> is the material: steel is about 20 times stiffer than wood. <span style="font-style:italic">I</span> is the shape of the cross-section. For a rectangle of width <span style="font-style:italic">b</span> and thickness <span style="font-style:italic">h</span>, <span style="font-style:italic">I = bh³/12</span>. That cube on <span style="font-style:italic">h</span> is the answer to the ruler puzzle: turning the ruler on its edge makes it about 30 times thicker in the bending direction.</p>
+
+<h2><span class="n">3</span>Add up the little bends</h2>
+<p>Here is the key idea. Chop the plank into pieces. Give each piece a small kink, sized by the bending moment at that spot. Start at the wall, where the plank is fixed flat, and lay the pieces end to end. Out comes the shape of the plank.</p>
+
+<div class="fig">
+<svg id="kink" viewBox="0 0 680 290" role="img" aria-label="The plank built from straight pieces, each kinked by an amount set by the bending moment"></svg>
+<div class="ctl">
+  <label for="kN">Number of pieces</label><input id="kN" type="range" min="0" max="5" step="1" value="1"><output id="kNo"></output>
+  <label for="kS">Exact curve</label><button id="kS" type="button" aria-pressed="false">Show it</button><span></span>
+</div>
+</div>
+
+<p>Big dots mark big kinks. Notice they’re largest near the wall, where the moment is largest, and they shrink to nothing at the tip. With a handful of pieces the shape is rough. With more pieces, it settles onto a smooth curve.</p>
+<p>Adding up lots of small changes is exactly what integration does. The kinks change the <em>slope</em> of the plank, and the slope changes its <em>height</em>. Two additions, so two integrations.</p>
+
+<h2><span class="n">4</span>Now the equation</h2>
+<p>Write <span style="font-style:italic">y</span> for how far the plank has dropped at a distance <span style="font-style:italic">x</span> from the wall. “How sharply it curves” is the second derivative, <span style="font-style:italic">y″</span>, so step 2 becomes</p>
+<p class="eq">EI · y″ = M = P(L − x)</p>
+<p>Integrate once to get the slope, then again to get the height. Each integration brings a constant, and the wall pins both of them down: at the wall the plank doesn’t drop and doesn’t tilt, so both constants are zero. The result is</p>
+<p class="eq">y = P x² (3L − x) / 6EI</p>
+<p>At the tip, where <span style="font-style:italic">x = L</span>:</p>
+<p class="eq">sag = PL³ / 3EI</p>
+<p>(Measuring <span style="font-style:italic">y</span> downward keeps the signs friendly. Textbooks often measure up, which adds minus signs but changes nothing physical.)</p>
+
+<h2><span class="n">5</span>What the formula tells you</h2>
+<div class="rules">
+  <div><b>Double the load</b>twice the sag</div>
+  <div><b>Double the length</b>eight times the sag</div>
+  <div><b>Double the thickness</b>one eighth of the sag</div>
+  <div><b>Wood to steel</b>about one twentieth of the sag</div>
+</div>
+<p>Go back to the sliders at the top and check each of these. Was your guess right about which one matters most?</p>
+
+<h2><span class="n">6</span>Check yourself</h2>
+<details><summary>A shelf sags too much. Is it better to make it twice as thick or half as long?</summary><p>Both help by the same factor: halving <span style="font-style:italic">L</span> divides the sag by 2³ = 8, and doubling <span style="font-style:italic">h</span> divides it by 2³ = 8. Halving the length also halves the moment at the wall, which reduces the stress there.</p></details>
+<details><summary>Where is the plank most likely to crack, and why?</summary><p>At the wall. That’s where the lever arm to the load is longest, so the bending moment is largest.</p></details>
+<details><summary>Why is the first integration constant zero?</summary><p>It equals the slope at the wall. The plank is built in, so it leaves the wall perfectly flat: slope zero.</p></details>
+<details><summary>Do you need the shear force to find the sag?</summary><p>Not for this method. You only need the bending moment, the stiffness <span style="font-style:italic">EI</span>, and what happens at the wall. The shear force is the rate at which the moment changes along the plank, which is useful when you start from the loads instead.</p></details>
+
+</main>
+<script>
+const NS='http://www.w3.org/2000/svg';
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const $=id=>document.getElementById(id);
+function wall(){return `<defs><pattern id="h${Math.random().toString(36).slice(2,6)}" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="var(--hatch)" stroke-width="1"/></pattern></defs>`}
+function wallRect(svg){const id='hp'+svg.id;return `<defs><pattern id="${id}" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="var(--hatch)" stroke-width="1"/></pattern>
+<marker id="ar${svg.id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="context-stroke"/></marker></defs>
+<rect x="20" y="30" width="40" height="230" fill="url(#${id})" stroke="var(--hatch)" stroke-width="0.75"/>`}
+const x0=60,Lp=480;
+
+/* hero */
+function hero(){
+  const P=+$('hP').value,h=+$('hH').value,E=+$('hM').value*1e9;
+  const mm=4*P*8/(E*0.3*Math.pow(h/100,3))*1000;
+  const px=Math.min(190,mm*0.24*5),hp=h*2.4,yb=80;
+  $('hPo').textContent=P+' N';$('hHo').textContent=h+' cm';
+  $('hS').textContent=(mm<10?mm.toFixed(1):Math.round(mm))+' mm';
+  let top=[],bot=[];
+  for(let i=0;i<=48;i++){const t=i/48,x=x0+t*Lp,y=yb+px*t*t*(3-t)/2;top.push(x.toFixed(1)+','+y.toFixed(1));bot.unshift(x.toFixed(1)+','+(y+hp).toFixed(1));}
+  const tx=x0+Lp,ty=yb+px,bs=14+P/1000*22;
+  $('hero').innerHTML=wallRect($('hero'))+
+  `<line x1="${x0}" y1="${yb}" x2="${tx}" y2="${yb}" stroke="var(--muted)" stroke-width="0.75" stroke-dasharray="4 4"/>
+  <polygon points="${top.join(' ')} ${bot.join(' ')}" fill="var(--wood)" stroke="var(--woodEdge)" stroke-width="0.75"/>
+  <rect x="${tx-bs-4}" y="${ty-bs}" width="${bs}" height="${bs}" rx="3" fill="var(--load)"/>
+  <text class="lbl" x="${tx-bs/2-4}" y="${ty-bs-8}" text-anchor="middle">P</text>
+  <line x1="${tx+14}" y1="${yb}" x2="${tx+14}" y2="${Math.max(yb+1,ty)}" stroke="var(--bend)" stroke-width="1.5" ${ty-yb>18?'marker-start="url(#arhero)" marker-end="url(#arhero)"':''}/>
+  <text class="big" x="${tx+22}" y="${(yb+ty)/2+6}">sag = y(L)</text>`;
+  const tm=0.6,xm=x0+tm*Lp,ym=yb+px*tm*tm*(3-tm)/2;
+  let m=`<line x1="${x0}" y1="${yb-26}" x2="${xm}" y2="${yb-26}" stroke="var(--muted)" stroke-width="1" marker-start="url(#arhero)" marker-end="url(#arhero)"/>`;
+  m+=`<line x1="${xm}" y1="${yb-32}" x2="${xm}" y2="${yb-4}" stroke="var(--muted)" stroke-width="0.75" stroke-dasharray="2 3"/>`;
+  m+=`<text class="big" x="${(x0+xm)/2}" y="${yb-34}" text-anchor="middle">x</text>`;
+  const dm=ym-yb>18?'marker-start="url(#arhero)" marker-end="url(#arhero)"':'';
+  m+=`<line x1="${xm}" y1="${yb}" x2="${xm}" y2="${Math.max(yb+1,ym)}" stroke="var(--bend)" stroke-width="1.5" ${dm}/>`;
+  m+=ym-yb>22?`<text class="big" x="${xm+8}" y="${(yb+ym)/2+6}">y(x)</text>`:`<text class="big" x="${xm}" y="${ym+hp+20}" text-anchor="middle">y(x)</text>`;
+  $('hero').insertAdjacentHTML('beforeend',m);
+}
+['hP','hH','hM'].forEach(i=>$(i).addEventListener('input',hero));
+
+/* cut */
+function cut(){
+  const f=+$('cX').value,yb=90,tx=x0+Lp,xc=x0+f*Lp,Lm=2;
+  $('cXo').textContent=(f*Lm).toFixed(1)+' m';
+  const id='cut';let s=wallRect($('cut'));
+  s+=`<rect x="${x0}" y="${yb}" width="${xc-x0-3}" height="14" rx="2" fill="var(--wood)" stroke="var(--woodEdge)" stroke-width="0.75"/>`;
+  s+=`<rect x="${xc+3}" y="${yb}" width="${tx-xc-3}" height="14" rx="2" fill="var(--wood)" stroke="var(--load)" stroke-width="1.5"/>`;
+  s+=`<line x1="${tx-10}" y1="${yb-48}" x2="${tx-10}" y2="${yb-4}" stroke="var(--load)" stroke-width="3" marker-end="url(#arcut)"/>`;
+  s+=`<text class="lbl" x="${tx-10}" y="${yb-56}" text-anchor="middle">P</text>`;
+  s+=`<path d="M${xc} ${yb+24} L${xc} ${yb+34} L${tx-10} ${yb+34} L${tx-10} ${yb+24}" fill="none" stroke="var(--muted)" stroke-width="1"/>`;
+  s+=`<text class="lbl" x="${(xc+tx-10)/2}" y="${yb+52}" text-anchor="middle">lever arm ${(Lm*(1-f)).toFixed(1)} m</text>`;
+  const b=280,amp=80;
+  s+=`<text class="lbl" x="${x0}" y="${b-amp-30}">Bending moment along the plank</text>`;
+  s+=`<polygon points="${x0},${b} ${x0},${b-amp} ${tx},${b}" fill="var(--accent)" opacity="0.15"/>`;
+  s+=`<line x1="${x0}" y1="${b-amp}" x2="${tx}" y2="${b}" stroke="var(--accent)" stroke-width="2"/>`;
+  s+=`<line x1="${x0}" y1="${b}" x2="${tx}" y2="${b}" stroke="var(--muted)" stroke-width="0.75"/>`;
+  s+=`<line x1="${xc}" y1="${b}" x2="${xc}" y2="${b-amp*(1-f)}" stroke="var(--accent)" stroke-width="3"/>`;
+  s+=`<circle cx="${xc}" cy="${b-amp*(1-f)}" r="5" fill="var(--accent)"/>`;
+  s+=`<text class="lbl" x="${x0+6}" y="${b-amp-0}" dx="4" dy="-2">P × L at the wall</text>`;
+  s+=`<text class="lbl" x="${tx}" y="${b+18}" text-anchor="end">zero at the tip</text>`;
+  $('cut').innerHTML=s;
+}
+$('cX').addEventListener('input',cut);
+
+/* kink */
+const Ns=[2,4,8,16,32,96];let exact=false;
+function kink(){
+  const N=Ns[+$('kN').value],A=0.85,yb=70,seg=Lp/N;$('kNo').textContent=N;
+  let s=wallRect($('kink'));
+  s+=`<line x1="${x0}" y1="${yb}" x2="${x0+Lp}" y2="${yb}" stroke="var(--muted)" stroke-width="0.75" stroke-dasharray="4 4"/>`;
+  let th=0,x=x0,y=yb,pts=[`${x},${y}`],dots='';
+  for(let i=0;i<N;i++){const t=i/N,d=A*(1-t-0.5/N)/N;th+=d;
+    if(N<=32){const r=Math.max(1.5,Math.min(9,d*N*9/A*Math.sqrt(8/N)));dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="var(--bend)" opacity="0.85"/>`;}
+    x+=seg;y+=seg*th;pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);}
+  s+=`<polyline points="${pts.join(' ')}" fill="none" stroke="var(--woodEdge)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" opacity="0.35"/>`;
+  s+=`<polyline points="${pts.join(' ')}" fill="none" stroke="var(--wood)" stroke-width="5" stroke-linejoin="round"/>`;
+  s+=dots;
+  if(exact){let e=[];for(let i=0;i<=60;i++){const t=i/60;e.push(`${(x0+t*Lp).toFixed(1)},${(yb+Lp*A*t*t*(3-t)/6).toFixed(1)}`);}
+    s+=`<polyline points="${e.join(' ')}" fill="none" stroke="var(--load)" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+    s+=`<text class="lbl" x="${x0+Lp}" y="${yb+Lp*A/3+26}" text-anchor="end">exact curve</text>`;}
+  s+=`<text class="lbl" x="${x0+12}" y="${yb-14}">fixed flat at the wall</text>`;
+  $('kink').innerHTML=s;
+}
+$('kN').addEventListener('input',kink);
+$('kS').addEventListener('click',()=>{exact=!exact;$('kS').textContent=exact?'Hide it':'Show it';$('kS').setAttribute('aria-pressed',exact);kink();});
+hero();cut();kink();
+</script>
+</body>
+</html>
