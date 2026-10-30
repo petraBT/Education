@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where does the beam sag most?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F6;--panel:#FFFFFF;--ink:#18211E;--muted:#5B6662;--line:#D5DCD9;
+  --accent:#00693E;--wood:#C9A268;--woodEdge:#8A6A3A;--load:#B23A48;--low:#2F6DB5;--moment:#B07A12;
+  color-scheme:light;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121715;--panel:#1A211E;--ink:#E6ECE9;--muted:#9AA6A1;--line:#2C3633;
+  --accent:#3FBF7F;--wood:#B58E55;--woodEdge:#7A5C30;--load:#E06B78;--low:#6FA3E6;--moment:#E0A63A;color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#121715;--panel:#1A211E;--ink:#E6ECE9;--muted:#9AA6A1;--line:#2C3633;
+  --accent:#3FBF7F;--wood:#B58E55;--woodEdge:#7A5C30;--load:#E06B78;--low:#6FA3E6;--moment:#E0A63A;color-scheme:dark;}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Literata",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.6}
+main{max-width:760px;margin:0 auto;padding:44px 22px 64px}
+h1{font-size:clamp(30px,5.5vw,44px);line-height:1.1;font-weight:600;margin:0 0 12px}
+p{margin:0 0 14px;max-width:64ch}
+.lede{color:var(--muted);font-size:19px}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin:22px 0}
+svg{display:block;width:100%;height:auto}
+.lbl{font-family:"Figtree",system-ui,sans-serif;font-size:13px;fill:var(--muted)}
+.big{font-family:"Figtree",system-ui,sans-serif;font-size:15px;font-weight:600}
+.ctl{display:flex;align-items:center;gap:14px;font-family:"Figtree",system-ui,sans-serif;font-size:15px;color:var(--muted);margin-top:10px}
+.ctl output{color:var(--ink);font-weight:600}
+/* the thumb is exactly 20px wide, so its centre lines up with 0.5 ft and 9.5 ft on the beam */
+.track{-webkit-appearance:none;appearance:none;display:block;background:transparent;height:24px;margin:2px 0 0 calc(15.588% - 10px);width:calc(68.824% + 20px)}
+.track::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:var(--line)}
+.track::-moz-range-track{height:4px;border-radius:2px;background:var(--line)}
+.track::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--load);border:2px solid var(--panel);margin-top:-8px;cursor:grab;box-sizing:content-box}
+.track::-moz-range-thumb{box-sizing:content-box;width:16px;height:16px;border-radius:50%;background:var(--load);border:2px solid var(--panel);cursor:grab}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cap{font-family:"Figtree",system-ui,sans-serif;font-size:16px;line-height:1.6;margin-top:12px;min-height:3.2em}
+</style>
+</head>
+<body>
+<main>
+<h1>Where does the beam sag most?</h1>
+<p class="lede">A 10 ft beam rests on two supports. Move the person along it and watch the lowest point of the beam.</p>
+
+<div class="fig">
+<svg id="beam" viewBox="0 0 680 360" role="img" aria-label="A beam on two supports with a person standing on it; the lowest point and the bending moment are marked"></svg>
+<input id="A" class="track" type="range" min="0.5" max="9.5" step="0.1" value="7" aria-label="Person position along the beam">
+<div class="ctl"><label for="A">Person stands at</label><output id="Ao"></output></div>
+<div class="cap" id="cap" aria-live="polite"></div>
+</div>
+
+<p>The bending moment (bottom) always peaks right under the person. The sag peaks where the beam stops going down and starts coming back up, where its slope is zero. That point sits on the longer, floppier side, between the person and the middle. The two only coincide when the person stands in the center.</p>
+<p>Bending is drawn exaggerated so the shape is easy to see.</p>
+</main>
+<script>
+const L=10,x0=80,s=52,xe=x0+L*s,yb=110,K=90/1250;
+const $=id=>document.getElementById(id);
+function f(x,a){const b=L-a;return x<=a?b*x*(L*L-b*b-x*x):a*(L-x)*(L*L-a*a-(L-x)*(L-x));}
+function upd(){
+  const a=+$('A').value,b=L-a;$('Ao').textContent=a.toFixed(1)+' ft';
+  const xm=a>=L/2?Math.sqrt((L*L-b*b)/3):L-Math.sqrt((L*L-a*a)/3);
+  let d='';for(let i=0;i<=100;i++){const x=i/100*L;d+=(i?'L':'M')+(x0+x*s).toFixed(1)+' '+(yb+f(x,a)*K).toFixed(1)+' ';}
+  const pa=x0+a*s,ya=yb+f(a,a)*K,pm=x0+xm*s,ym=yb+f(xm,a)*K;
+  let h=`<line x1="${x0}" y1="${yb}" x2="${xe}" y2="${yb}" stroke="var(--muted)" stroke-width="0.75" stroke-dasharray="4 4"/>`;
+  [x0,xe].forEach(p=>h+=`<polygon points="${p},${yb+4} ${p-11},${yb+22} ${p+11},${yb+22}" fill="none" stroke="var(--muted)" stroke-width="1"/>`);
+  h+=`<path d="${d}" fill="none" stroke="var(--woodEdge)" stroke-width="8" stroke-linecap="round" opacity="0.4"/><path d="${d}" fill="none" stroke="var(--wood)" stroke-width="5" stroke-linecap="round"/>`;
+  h+=`<circle cx="${pa}" cy="${ya-44}" r="7" fill="var(--load)"/><line x1="${pa}" y1="${ya-37}" x2="${pa}" y2="${ya-5}" stroke="var(--load)" stroke-width="3" stroke-linecap="round"/>`;
+  h+=`<text class="big" x="${pa}" y="${ya-60}" text-anchor="middle" fill="var(--ink)">person</text>`;
+  h+=`<line x1="${pm}" y1="${ym+8}" x2="${pm}" y2="${ym+28}" stroke="var(--low)" stroke-width="1.5"/><circle cx="${pm}" cy="${ym}" r="5" fill="var(--low)"/>`;
+  h+=`<text class="big" x="${pm}" y="${ym+46}" text-anchor="middle" fill="var(--low)">lowest point</text>`;
+  const bm=345,hm=55*(a*b/L)/2.5;
+  h+=`<text class="lbl" x="${x0}" y="282">Bending moment</text>`;
+  h+=`<polygon points="${x0},${bm} ${pa},${bm-hm} ${xe},${bm}" fill="var(--moment)" opacity="0.18"/><polyline points="${x0},${bm} ${pa},${bm-hm} ${xe},${bm}" fill="none" stroke="var(--moment)" stroke-width="2"/>`;
+  h+=`<line x1="${x0}" y1="${bm}" x2="${xe}" y2="${bm}" stroke="var(--muted)" stroke-width="0.5"/>`;
+  h+=`<line x1="${pm}" y1="${bm-60}" x2="${pm}" y2="${bm}" stroke="var(--low)" stroke-width="1" stroke-dasharray="3 3"/>`;
+  h+=`<text class="lbl" x="${x0}" y="${bm+13}" text-anchor="middle">0</text><text class="lbl" x="${xe}" y="${bm+13}" text-anchor="middle">10 ft</text>`;
+  $('beam').innerHTML=h;
+  const gap=Math.abs(a-xm),more=(f(xm,a)/f(a,a)-1)*100;
+  $('cap').textContent=gap<0.05?'With the person in the middle, the lowest point is right under their feet.':
+  `Lowest point: ${xm.toFixed(2)} ft from the left support, ${gap.toFixed(2)} ft from the person, on the longer side. It sags ${more.toFixed(0)}% more than the spot under the person, even though the bending moment peaks under the person.`;
+}
+$('A').addEventListener('input',upd);upd();
+</script>
+</body>
+</html>
